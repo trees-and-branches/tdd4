@@ -32,5 +32,80 @@ final class tdd4Tests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
+    
+    func testFake() throws {
+        let fakeDataService = FakeDataService()
+        let fakeFile = File(title: "cool")
+        
+        fakeDataService.saveData() { file in
+        }
+    }
+    
+    //r
+    func testMock() throws {
+        let mockDataService = MockDataService()
+        
+        mockDataService.saveData() { _ in
+            XCTAssertTrue(mockDataService.isDataSaved)
+        }
+        
+    }
+    
+    func testStub() throws {
+        let stubDataService = StubDataService()
+        
+        stubDataService.saveData() { file in
+            
+            XCTAssertNotNil(file)
+            
+        }
+    }
+    
+}
 
+
+class File {
+    let title: String
+    
+    init(title: String) {
+        self.title = title
+    }
+}
+
+class FakeDataService: DataService {
+    func saveData(completion: (File?) -> Void) {
+        print(thisIsAFunction())
+        completion(nil)
+    }
+     
+    func thisIsAFunction() {
+        print("hello")
+    }
+    
+}
+
+class MockDataService: DataService {
+    
+    var isDataSaved = false
+    
+    func saveData(completion: (File?) -> Void) {
+        isDataSaved = true
+    }
+    
+    
+}
+
+class StubDataService: DataService {
+    func saveData(completion: (File?) -> Void) {
+        let file = File(title: "stinky")
+        
+        completion(file)
+    }
+    
+    
+}
+
+
+protocol DataService {
+    func saveData(completion: (File?) -> Void)
 }
